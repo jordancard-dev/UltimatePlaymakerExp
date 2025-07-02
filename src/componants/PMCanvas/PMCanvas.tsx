@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import baseball_bg from '../../assets/sportsbackgrounds/baseball_bg.png'
+import Lineuprandomizer from '../baseball/LineupRandomizer/Lineuprandomizer';
 type Props = {}
 const PMCanvas = (props: Props) => {
     const [circlePosition, setCirclePosition] = useState({ x: 50, y: 70 });
@@ -56,9 +57,86 @@ const PMCanvas = (props: Props) => {
 
     }
 
+    // Add baseball position to canvas
+    const setupBaseballPosition = (position: string, x: number, y: number) => {
+        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        console.log('Adding position:', position, 'at', x, y);
+        ctx.font = '16px Arial';
+        ctx.fillStyle = 'blue';
+        ctx.fillText(position, x, y);
+
+    }
+    const setupBaseball = () => {
+        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+
+        const img = new Image();
+        img.src = baseball_bg; // Replace with your image path
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            let positions = [
+                { position: 'Pitcher', x: 125, y: 100 },
+                { position: 'Catcher', x: 125, y: 150 },
+                { position: 'First Base', x: 200, y: 75 },
+                { position: 'Second Base', x: 175, y: 50 },
+                { position: 'Third Base', x: 50, y: 75 },
+                { position: 'Shortstop', x: 75, y: 50 },
+                { position: 'Left Field', x: 25, y: 25 },
+                { position: 'Center Field', x: 125, y: 20 },
+                { position: 'Right Field', x: 200, y: 25 }
+            ];
+            positions.forEach(pos => {
+                setupBaseballPosition(pos.position, pos.x, pos.y);
+            });
+        };
+
+
+    }
+
+    const onSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedSport = event.target.value;
+        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas before adding new background
+        switch (selectedSport) {
+            case 'baseball':
+                setupBaseball(); // Example position
+                break;
+            case 'basketball':
+                // Add basketball background logic here
+                ctx.fillStyle = '#f0f0f0'; // Placeholder color for basketball
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                break;
+            case 'football':
+                // Add football background logic here
+                ctx.fillStyle = '#f0f0f0'; // Placeholder color for football
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                break;
+            default:
+                ctx.fillStyle = '#f0f0f0'; // Default background color
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                break;
+        }
+    }
 
     return (
-        <div>PMCanvas
+        <div>
+
+            {/* TODO: Make a type for the sport options */}
+            {/* TODO: Make into its own component */}
+            <select onChange={onSelectChange} id="pm-sport-select">
+                <option value="none">None</option>
+                <option value="baseball">Baseball</option>
+                <option value="basketball">Basketball</option>
+                <option value="football">Football</option>
+            </select>
 
             <canvas
                 style={{
@@ -69,6 +147,7 @@ const PMCanvas = (props: Props) => {
                 }}
                 id="pm-canvas"
             ></canvas>
+            <Lineuprandomizer />
             <div id="pm-controls">
                 <button id="pm-add-text" onClick={() => addEditableTextToCanvas('Hello World', 50, 25)}>Add Text</button>
                 <button id="pm-add-image" onClick={addImageToCanvas}>Add Image</button>
