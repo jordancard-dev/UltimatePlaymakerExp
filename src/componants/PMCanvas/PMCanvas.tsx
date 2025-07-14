@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import baseball_bg from '../../assets/sportsbackgrounds/baseball_bg.png'
 import Lineuprandomizer from '../baseball/LineupRandomizer/Lineuprandomizer';
-import { AbreviationsForFootballPositions, FootballOfensiveFormations } from '../../utils/constants';
+import { AbreviationsForFootballPositions, AmericanFootballOfensiveFormations } from '../../utils/constants';
+import FormationSelector from '../football/FormationSelector';
 type Props = {}
 const PMCanvas = (props: Props) => {
     const [circlePosition, setCirclePosition] = useState({ x: 50, y: 70 });
+    const [selectedSport, setSelectedSport] = useState('none');
     // use State to manage x and y coordinates of the circle
     // const [circlePosition, setCirclePosition] = useState({ x: 50, y: 70 });
 
@@ -99,7 +101,7 @@ const PMCanvas = (props: Props) => {
 
     }
 
-    const setupFootball = () => {
+    const setupFootball = (formation: FootballFormation) => {
         const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
@@ -109,7 +111,7 @@ const PMCanvas = (props: Props) => {
         // For example, you could draw a football field and place players based on the FootballOfensiveFormations
         // This is a placeholder implementation
 
-        let positiions = FootballOfensiveFormations[0].initialPlayersPositions;
+        let positiions = AmericanFootballOfensiveFormations[0].initialPlayersPositions;
         Object.keys(positiions).forEach((key) => {
             const pos = positiions[key];
             var canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
@@ -135,7 +137,7 @@ const PMCanvas = (props: Props) => {
     }
 
     const onSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedSport = event.target.value;
+        setSelectedSport(event.target.value);
         const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
@@ -160,6 +162,11 @@ const PMCanvas = (props: Props) => {
         }
     }
 
+    const handleFormationChange = (formation?: FootballFormation) => {
+        if (!formation) return;
+        setupFootball(formation); // This will redraw the football field with the selected formation
+    }
+
     return (
         <div>
 
@@ -182,6 +189,9 @@ const PMCanvas = (props: Props) => {
                 id="pm-canvas"
             ></canvas>
             <Lineuprandomizer />
+            {selectedSport === 'football' && (
+                <FormationSelector onChangeFormation={handleFormationChange} />
+            )}
             <div id="pm-controls">
                 <button id="pm-add-text" onClick={() => addEditableTextToCanvas('Hello World', 50, 25)}>Add Text</button>
                 <button id="pm-add-image" onClick={addImageToCanvas}>Add Image</button>

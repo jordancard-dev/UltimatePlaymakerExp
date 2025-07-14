@@ -1,10 +1,5 @@
 
-interface FootballFormation {
-    id: number;
-    name: string;
-    description: string;
-    initialPlayersPositions: { [key: string]: { x: number; y: number } };
-}
+
 export const AbreviationsForFootballPositions = {
     quarterback: 'QB',
     runningBack1: 'RB1',
@@ -19,7 +14,7 @@ export const AbreviationsForFootballPositions = {
     leftGuard: 'LG',
     rightGuard: 'RG',
 };
-export const FootballOfensiveFormations: FootballFormation[] = [
+export const AmericanFootballOfensiveFormations: FootballFormation[] = [
     {
         id: 1,
         name: 'I-Formation',
@@ -55,6 +50,45 @@ export const FootballOfensiveFormations: FootballFormation[] = [
             rightMidfielder2: { x: 75, y: 40 },
             forward1: { x: 45, y: 60 },
             forward2: { x: 55, y: 60 }
+        }
+    }
+]
+
+export const AmericanFootballDefensiveFormations: FootballFormation[] = [
+    {
+        id: 1,
+        name: '3-4 Defense',
+        description: 'A defensive formation with three defensive linemen and four linebackers.',
+        initialPlayersPositions: {
+            leftDefensiveEnd: { x: 120, y: 70 },
+            rightDefensiveEnd: { x: 180, y: 70 },
+            noseTackle: { x: 150, y: 70 },
+            leftOutsideLinebacker: { x: 100, y: 90 },
+            rightOutsideLinebacker: { x: 200, y: 90 },
+            insideLinebacker1: { x: 130, y: 90 },
+            insideLinebacker2: { x: 170, y: 90 },
+            cornerback1: { x: 80, y: 50 },
+            cornerback2: { x: 220, y: 50 },
+            freeSafety: { x: 150, y: 50 },
+            strongSafety: { x: 150, y: 30 }
+        }
+    },
+    {
+        id: 2,
+        name: '4-3 Defense',
+        description: 'A defensive formation with four defensive linemen and three linebackers.',
+        initialPlayersPositions: {
+            leftDefensiveEnd: { x: 120, y: 70 },
+            rightDefensiveEnd: { x: 180, y: 70 },
+            defensiveTackle1: { x: 150, y: 70 },
+            defensiveTackle2: { x: 150, y: 90 },
+            leftOutsideLinebacker: { x: 100, y: 90 },
+            rightOutsideLinebacker: { x: 200, y: 90 },
+            middleLinebacker: { x: 150, y: 90 },
+            cornerback1: { x: 80, y: 50 },
+            cornerback2: { x: 220, y: 50 },
+            freeSafety: { x: 150, y: 50 },
+            strongSafety: { x: 150, y: 30 }
         }
     }
 ];
