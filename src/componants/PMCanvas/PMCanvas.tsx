@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import baseball_bg from '../../assets/sportsbackgrounds/baseball_bg.png'
 import Lineuprandomizer from '../baseball/LineupRandomizer/Lineuprandomizer';
+import { AbreviationsForFootballPositions, FootballOfensiveFormations } from '../../utils/constants';
 type Props = {}
 const PMCanvas = (props: Props) => {
     const [circlePosition, setCirclePosition] = useState({ x: 50, y: 70 });
@@ -98,6 +99,41 @@ const PMCanvas = (props: Props) => {
 
     }
 
+    const setupFootball = () => {
+        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.fillStyle = '#f0f0f0'; // Placeholder color for football
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Here you would add the football field and player positions
+        // For example, you could draw a football field and place players based on the FootballOfensiveFormations
+        // This is a placeholder implementation
+
+        let positiions = FootballOfensiveFormations[0].initialPlayersPositions;
+        Object.keys(positiions).forEach((key) => {
+            const pos = positiions[key];
+            var canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
+            var context = canvas.getContext('2d');
+            let abbreviation = AbreviationsForFootballPositions[key as keyof typeof AbreviationsForFootballPositions] || key; // Use abbreviation if available
+            var radius = 10;//(canvas.width - 2) / 2;
+            if (context === null) return;
+            context.beginPath();
+            context.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false);
+            context.fillStyle = '#eee';
+            context.fill();
+            context.strokeStyle = '#333';
+            context.stroke();
+            context.font = '8pt sans-serif';
+            context.fillStyle = '#333';
+            context.textBaseline = 'middle';
+            context.textAlign = 'center';
+            context.fillText(abbreviation, pos.x, pos.y);
+        });
+        ctx.font = '16px Arial';
+        ctx.fillStyle = 'black';
+        ctx.fillText('Football Field', 50, 20); // Placeholder text for football
+    }
+
     const onSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedSport = event.target.value;
         const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
@@ -115,9 +151,7 @@ const PMCanvas = (props: Props) => {
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 break;
             case 'football':
-                // Add football background logic here
-                ctx.fillStyle = '#f0f0f0'; // Placeholder color for football
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                setupFootball(); // Setup football field and positions
                 break;
             default:
                 ctx.fillStyle = '#f0f0f0'; // Default background color
