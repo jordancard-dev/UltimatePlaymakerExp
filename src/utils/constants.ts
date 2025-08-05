@@ -92,3 +92,30 @@ export const AmericanFootballDefensiveFormations: FootballFormation[] = [
         }
     }
 ];
+
+export const SupportedSports: Sport[] = [
+    {
+        id: 1,
+        name: 'American Football',
+        description: 'A team sport played with an oval ball on a rectangular field with goalposts at each end.',
+        isActive: true
+    },
+    {
+        id: 2,
+        name: 'Baseball',
+        description: 'A bat-and-ball game played between two teams of nine players each on a diamond-shaped field.',
+        isActive: true
+    },
+    {
+        id: 3,
+        name: 'Football',
+        description: 'A team sport played with a spherical ball on a rectangular field with goalposts at each end.',
+        isActive: true
+    },
+    {
+        id: 4,
+        name: 'Basketball',
+        description: 'A team sport played on a rectangular court where two teams try to score points by shooting a ball through the opponent\'s hoop.',
+        isActive: true
+    }
+];

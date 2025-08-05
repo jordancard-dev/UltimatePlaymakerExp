@@ -1,63 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import baseball_bg from '../../assets/sportsbackgrounds/baseball_bg.png'
 import Lineuprandomizer from '../baseball/LineupRandomizer/Lineuprandomizer';
-import { AbreviationsForFootballPositions, AmericanFootballOfensiveFormations } from '../../utils/constants';
+import { AbreviationsForFootballPositions, AmericanFootballOfensiveFormations, SupportedSports } from '../../utils/constants';
 import FormationSelector from '../football/FormationSelector';
 type Props = {}
 const PMCanvas = (props: Props) => {
-    const [circlePosition, setCirclePosition] = useState({ x: 50, y: 70 });
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [selectedSport, setSelectedSport] = useState('none');
-    // use State to manage x and y coordinates of the circle
-    // const [circlePosition, setCirclePosition] = useState({ x: 50, y: 70 });
 
-    // Add image to canvas
-    const addImageToCanvas = () => {
-        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        const img = new Image();
-        img.src = baseball_bg; // Replace with your image path
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        };
+    const getContext = () => canvasRef.current?.getContext('2d');
 
-    }
-
-    //Add Circle to canvas at position (x, y)
-    const addCircleToCanvas = (x: number, y: number) => {
-        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        ctx.beginPath();
-        ctx.arc(circlePosition.x, circlePosition.y, 10, 0, Math.PI * 2);
-        ctx.fillStyle = 'red';
-        ctx.fill();
-        ctx.closePath();
-    }
-
-
-    // Add editableText to canvas
-    const addEditableTextToCanvas = (text: string, x: number, y: number) => {
-        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        ctx.font = '16px Arial';
-        ctx.fillStyle = 'yellow';
-        ctx.fillText(text, x, y);
-    }
-
-    // Clear canvas
+    /**
+     * Clears the canvas
+     * @returns {void}
+     */
     const clearCanvas = () => {
-        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d');
+
+        const ctx = getContext();
         if (!ctx) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    // Add draggable functionality to canvas
-    const makeCanvasDraggable = () => {
-
-
+        const width = canvasRef?.current?.width ?? 0;
+        const height = canvasRef?.current?.height ?? 0;
+        ctx.clearRect(0, 0, width, height);
     }
 
     // Add baseball position to canvas
@@ -71,6 +34,10 @@ const PMCanvas = (props: Props) => {
         ctx.fillText(position, x, y);
 
     }
+    /**
+     * Sets up the baseball field on the canvas
+     * @returns {void}
+     */
     const setupBaseball = () => {
         const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
@@ -101,7 +68,12 @@ const PMCanvas = (props: Props) => {
 
     }
 
-    const setupFootball = (formation: FootballFormation) => {
+    /**
+     * Sets up the football field on the canvas
+     * @param {FootballFormation} formation - The football formation to set up
+     * @returns {Promise<void>}
+     */
+    const setupFootball = async (formation: FootballFormation) => {
         const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
@@ -111,9 +83,9 @@ const PMCanvas = (props: Props) => {
         // For example, you could draw a football field and place players based on the FootballOfensiveFormations
         // This is a placeholder implementation
 
-        let positiions = AmericanFootballOfensiveFormations[0].initialPlayersPositions;
-        Object.keys(positiions).forEach((key) => {
-            const pos = positiions[key];
+        let positions = formation.initialPlayersPositions;
+        Object.keys(positions).forEach((key) => {
+            const pos = positions[key];
             var canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
             var context = canvas.getContext('2d');
             let abbreviation = AbreviationsForFootballPositions[key as keyof typeof AbreviationsForFootballPositions] || key; // Use abbreviation if available
@@ -136,71 +108,56 @@ const PMCanvas = (props: Props) => {
         ctx.fillText('Football Field', 50, 20); // Placeholder text for football
     }
 
-    const onSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedSport(event.target.value);
-        const canvas = document.getElementById('pm-canvas') as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas before adding new background
-        switch (selectedSport) {
-            case 'baseball':
-                setupBaseball(); // Example position
-                break;
-            case 'basketball':
-                // Add basketball background logic here
-                ctx.fillStyle = '#f0f0f0'; // Placeholder color for basketball
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                break;
-            case 'football':
-                setupFootball(); // Setup football field and positions
-                break;
-            default:
-                ctx.fillStyle = '#f0f0f0'; // Default background color
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                break;
-        }
-    }
-
+    /**
+     * Handles the change event for the formation selection
+     * @param formation - The selected football formation
+     * @returns {void}
+     */
     const handleFormationChange = (formation?: FootballFormation) => {
         if (!formation) return;
         setupFootball(formation); // This will redraw the football field with the selected formation
     }
 
+
+    /**
+     * Handles the change event for the sport selection dropdown
+     * @param event - The change event
+     * @returns {Promise<void>}
+     */
+    const onSelectChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedSport(event.target.value);
+    }
+
+    useEffect(() => {
+        clearCanvas();
+        if (selectedSport === 'baseball') setupBaseball();
+        if (selectedSport === 'american_football') setupFootball(AmericanFootballOfensiveFormations[0]);
+    }, [selectedSport]);
+
     return (
         <div>
-
-            {/* TODO: Make a type for the sport options */}
-            {/* TODO: Make into its own component */}
-            <select onChange={onSelectChange} id="pm-sport-select">
-                <option value="none">None</option>
-                <option value="baseball">Baseball</option>
-                <option value="basketball">Basketball</option>
-                <option value="football">Football</option>
-            </select>
-
+            <div id="pm-controls">
+                <select onChange={onSelectChange} id="pm-sport-select">
+                    <option value="none">None</option>
+                    {SupportedSports.map((sport) => (
+                        <option key={sport.id} value={sport.name.toLowerCase().replaceAll(' ', '_')}>{sport.name}</option>
+                    ))}
+                </select>
+                {selectedSport === 'baseball' && (
+                    <Lineuprandomizer />
+                )}
+                {selectedSport === 'american_football' && (
+                    <FormationSelector onChangeFormation={handleFormationChange} />
+                )}
+            </div>
             <canvas
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    border: '1px solid black',
-                    backgroundColor: '#f0f0f0'
-                }}
+                ref={canvasRef}
+                width={800}
+                height={600}
+                style={{ width: '100%', height: '100%', border: '1px solid black', backgroundColor: '#f0f0f0' }}
                 id="pm-canvas"
             ></canvas>
-            <Lineuprandomizer />
-            {selectedSport === 'football' && (
-                <FormationSelector onChangeFormation={handleFormationChange} />
-            )}
-            <div id="pm-controls">
-                <button id="pm-add-text" onClick={() => addEditableTextToCanvas('Hello World', 50, 25)}>Add Text</button>
-                <button id="pm-add-image" onClick={addImageToCanvas}>Add Image</button>
-                x: <input type="number" value={circlePosition.x} onChange={(e) => setCirclePosition({ ...circlePosition, x: parseInt(e.target.value) })} />
-                y: <input type="number" value={circlePosition.y} onChange={(e) => setCirclePosition({ ...circlePosition, y: parseInt(e.target.value) })} />
-                <br />
-                <button id="pm-add-circle" onClick={() => addCircleToCanvas(50, 70)}>Add Circle </button>
-                <button id="pm-clear" onClick={() => clearCanvas}>Clear</button>
-            </div>
+
         </div>
     )
 }
