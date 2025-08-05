@@ -6,6 +6,13 @@ declare global {
         description: string;
         isActive: boolean;
     }
+
+    interface Formation {
+        id: number;
+        name: string;
+        description: string;
+        initialPlayersPositions: { [key: string]: { x: number; y: number } };
+    }
 }
 export { };
 

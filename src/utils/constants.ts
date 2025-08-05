@@ -14,6 +14,7 @@ export const AbreviationsForFootballPositions = {
     leftGuard: 'LG',
     rightGuard: 'RG',
 };
+
 export const AmericanFootballOfensiveFormations: FootballFormation[] = [
     {
         id: 1,
@@ -89,6 +90,43 @@ export const AmericanFootballDefensiveFormations: FootballFormation[] = [
             cornerback2: { x: 220, y: 50 },
             freeSafety: { x: 150, y: 50 },
             strongSafety: { x: 150, y: 30 }
+        }
+    }
+];
+
+
+// BASEBALL FORMATION
+export const BaseballOfensiveFormations: BaseballFormation[] = [
+    {
+        id: 1,
+        name: 'Standard',
+        description: 'A standard baseball formation with all positions filled.',
+        initialPlayersPositions: {
+            pitcher: { x: 125, y: 100 },
+            catcher: { x: 125, y: 150 },
+            firstBase: { x: 200, y: 75 },
+            secondBase: { x: 175, y: 50 },
+            thirdBase: { x: 50, y: 75 },
+            shortstop: { x: 75, y: 50 },
+            leftField: { x: 25, y: 25 },
+            centerField: { x: 125, y: 20 },
+            rightField: { x: 200, y: 25 }
+        }
+    },
+    {
+        id: 2,
+        name: 'Infield Shift',
+        description: 'A defensive shift where infielders adjust their positions based on the batter.',
+        initialPlayersPositions: {
+            pitcher: { x: 125, y: 100 },
+            catcher: { x: 125, y: 150 },
+            firstBase: { x: 210, y: 80 },
+            secondBase: { x: 160, y: 40 },
+            thirdBase: { x: 40, y: 80 },
+            shortstop: { x: 90, y: 40 },
+            leftField: { x: 20, y: 30 },
+            centerField: { x: 130, y: 20 },
+            rightField: { x: 210, y: 30 }
         }
     }
 ];

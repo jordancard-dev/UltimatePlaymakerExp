@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
     component: {
+        supportFile: 'cypress/support/component.ts',
         devServer: {
             framework: 'react',
             bundler: 'vite',

@@ -14,8 +14,11 @@
     "test:component": "cypress run --component"
   },
   "dependencies": {
+    "konva": "^9.3.22",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-konva": "^19.0.7",
+    "use-image": "^1.1.4"
   },
   "devDependencies": {
     "@cypress/react": "^9.0.1",

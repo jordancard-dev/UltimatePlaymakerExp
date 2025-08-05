@@ -4,3 +4,4 @@ describe('App', () => {
         cy.contains('Playmaker').should('exist')
     })
 })
+

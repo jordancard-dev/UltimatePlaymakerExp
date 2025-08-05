@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "types": [
+      "cypress",
+      "node"
+    ],
     "module": "ESNext"
   },
   "files": [],

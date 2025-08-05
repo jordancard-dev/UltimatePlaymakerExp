@@ -1,15 +1,45 @@
 import React, { useEffect, useRef, useState } from 'react'
 import baseball_bg from '../../assets/sportsbackgrounds/baseball_bg.png'
 import Lineuprandomizer from '../baseball/LineupRandomizer/Lineuprandomizer';
-import { AbreviationsForFootballPositions, AmericanFootballOfensiveFormations, SupportedSports } from '../../utils/constants';
+import { AbreviationsForFootballPositions, AmericanFootballOfensiveFormations, BaseballOfensiveFormations, SupportedSports } from '../../utils/constants';
 import FormationSelector from '../football/FormationSelector';
+import { Stage, Layer, Image as KonvaImage, Circle, Text } from 'react-konva';
+import useImage from 'use-image';
 type Props = {}
 const PMCanvas = (props: Props) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [selectedSport, setSelectedSport] = useState('none');
+    const [formation, setFormation] = useState<FootballFormation | null>(null);
 
     const getContext = () => canvasRef.current?.getContext('2d');
 
+    const CanvasImage = ({ src, width, height }: { src: string, width: number, height: number }) => {
+        const [image] = useImage(src);
+        return <KonvaImage image={image} width={width} height={height} />;
+    };
+
+    const SetPlayersPosition = (formation: FootballFormation) => {
+        return Object.entries(formation.initialPlayersPositions).map(
+            ([key, pos], idx) => {
+                const label =
+                    AbreviationsForFootballPositions[key as keyof typeof AbreviationsForFootballPositions] || key;
+                return (
+                    <React.Fragment key={idx}>
+                        <Circle x={pos.x} y={pos.y} radius={12} fill="#eee" stroke="#333" />
+                        <Text
+                            text={label}
+                            x={pos.x}
+                            y={pos.y}
+                            offsetX={10}
+                            offsetY={7}
+                            fontSize={10}
+                            fill="#333"
+                        />
+                    </React.Fragment>
+                );
+            }
+        );
+    }
     /**
      * Clears the canvas
      * @returns {void}
@@ -115,7 +145,7 @@ const PMCanvas = (props: Props) => {
      */
     const handleFormationChange = (formation?: FootballFormation) => {
         if (!formation) return;
-        setupFootball(formation); // This will redraw the football field with the selected formation
+        setFormation(formation);
     }
 
 
@@ -125,19 +155,21 @@ const PMCanvas = (props: Props) => {
      * @returns {Promise<void>}
      */
     const onSelectChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setFormation(null); // Reset formation when sport changes
         setSelectedSport(event.target.value);
     }
 
     useEffect(() => {
         clearCanvas();
         if (selectedSport === 'baseball') setupBaseball();
-        if (selectedSport === 'american_football') setupFootball(AmericanFootballOfensiveFormations[0]);
-    }, [selectedSport]);
+        if (selectedSport === 'american_football') setupFootball(formation || AmericanFootballOfensiveFormations[0]);
+
+    }, [selectedSport, formation]);
 
     return (
         <div>
             <div id="pm-controls">
-                <select onChange={onSelectChange} id="pm-sport-select">
+                <select id="pm-sport-select" data-cy="sport-select" onChange={onSelectChange}>
                     <option value="none">None</option>
                     {SupportedSports.map((sport) => (
                         <option key={sport.id} value={sport.name.toLowerCase().replaceAll(' ', '_')}>{sport.name}</option>
@@ -150,15 +182,18 @@ const PMCanvas = (props: Props) => {
                     <FormationSelector onChangeFormation={handleFormationChange} />
                 )}
             </div>
-            <canvas
-                ref={canvasRef}
-                width={800}
-                height={600}
-                style={{ width: '100%', height: '100%', border: '1px solid black', backgroundColor: '#f0f0f0' }}
-                id="pm-canvas"
-            ></canvas>
+            <Stage width={800} height={600}>
+                <Layer>
+                    {/* Background Image */}
+                    {selectedSport === 'baseball' && <CanvasImage src={baseball_bg} width={800} height={600} />}
 
-        </div>
+                    {/* Players */}
+                    {selectedSport === 'american_football' && SetPlayersPosition(formation || AmericanFootballOfensiveFormations[0])}
+                    {selectedSport === 'baseball' && SetPlayersPosition(formation || BaseballOfensiveFormations[0])}
+
+                </Layer>
+            </Stage>
+        </div >
     )
 }
 
