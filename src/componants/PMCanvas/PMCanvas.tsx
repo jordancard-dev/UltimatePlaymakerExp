@@ -7,14 +7,24 @@ import { Stage, Layer, Image as KonvaImage, Circle, Text } from 'react-konva';
 import useImage from 'use-image';
 type Props = {}
 const PMCanvas = (props: Props) => {
-    const [selectedSport, setSelectedSport] = useState('none');
+    const [selectedSport, setSelectedSport] = useState(Sports.AmericanFootball);
     const [formation, setFormation] = useState<FootballFormation | null>(null);
 
+    /**
+     * Renders an image on the canvas
+     * @param param0 - The image properties
+     * @returns The rendered image
+     */
     const CanvasImage = ({ src, width, height }: { src: string, width: number, height: number }) => {
         const [image] = useImage(src);
         return <KonvaImage image={image} width={width} height={height} />;
     };
 
+    /**
+     * Sets the players' positions on the canvas based on the selected formation
+     * @param formation - The selected football formation
+     * @returns An array of React fragments containing circles and text for each player position
+     */
     const SetPlayersPosition = (formation: FootballFormation) => {
         return Object.entries(formation.initialPlayersPositions).map(
             ([key, pos], idx) => {
@@ -56,7 +66,7 @@ const PMCanvas = (props: Props) => {
      */
     const onSelectChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
         setFormation(null); // Reset formation when sport changes
-        setSelectedSport(event.target.value);
+        setSelectedSport(event.target.value as Sports);
     }
 
     return (
@@ -68,21 +78,21 @@ const PMCanvas = (props: Props) => {
                         <option key={sport.id} value={sport.name.toLowerCase().replaceAll(' ', '_')}>{sport.name}</option>
                     ))}
                 </select>
-                {selectedSport === 'baseball' && (
+                {selectedSport === Sports.Baseball && (
                     <Lineuprandomizer />
                 )}
-                {selectedSport === 'american_football' && (
+                {selectedSport === Sports.AmericanFootball && (
                     <FormationSelector onChangeFormation={handleFormationChange} />
                 )}
             </div>
             <Stage width={800} height={600}>
                 <Layer>
                     {/* Background Image */}
-                    {selectedSport === 'baseball' && <CanvasImage src={baseball_bg} width={800} height={600} />}
+                    {selectedSport === Sports.Baseball && <CanvasImage src={baseball_bg} width={800} height={600} />}
 
                     {/* Players */}
-                    {selectedSport === 'american_football' && SetPlayersPosition(formation || AmericanFootballOfensiveFormations[0])}
-                    {selectedSport === 'baseball' && SetPlayersPosition(formation || BaseballOfensiveFormations[0])}
+                    {selectedSport === Sports.AmericanFootball && SetPlayersPosition(formation || AmericanFootballOfensiveFormations[0])}
+                    {selectedSport === Sports.Baseball && SetPlayersPosition(formation || BaseballOfensiveFormations[0])}
 
                 </Layer>
             </Stage>

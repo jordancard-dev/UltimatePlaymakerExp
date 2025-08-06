@@ -13,6 +13,12 @@ declare global {
         description: string;
         initialPlayersPositions: { [key: string]: { x: number; y: number } };
     }
+
+    enum Sports {
+        AmericanFootball = 'american_football',
+        Baseball = 'baseball',
+        Football = 'football'
+    }
 }
 export { };
 
